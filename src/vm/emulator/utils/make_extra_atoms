@@ -1,0 +1,5 @@
+#!/bin/bash
+
+diff ../x86_64-unknown-linux-gnu/atom.names.gen ../beam/atom.names.src --new-line-format="" --old-line-format="%L" --unchanged-line-format="" > ../x86_64-unknown-linux-gnu/atom.names.gen.filtered
+
+exit 0

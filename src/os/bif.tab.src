@@ -1,0 +1,48 @@
+#
+# File format:
+#
+# Lines starting with '#' are ignored.
+#
+# <bif-decl> ::= "bif" <bif> <C-name>* | "ubif" <bif> <C-name>*
+# <bif> ::= <module> ":" <name> "/" <arity>
+#
+# "ubif" is an unwrapped bif, i.e. a bif without a trace wrapper,
+# or rather; the trace entry point in the export entry is the same
+# as the normal entry point, and no trace wrapper is generated.
+#
+# Important: Use "ubif" for guard BIFs and operators; use "bif" for ordinary BIFs.
+#
+# Add new BIFs to the end of the file.
+#
+# Note: Guards BIFs require special support in the compiler (to be able to actually
+# call them from within a guard).
+#
+
+#
+# HydrOS specific
+#
+
+bif os_unsafe:do_get_sys_val/1
+bif os_unsafe:do_set_sys_val/2
+bif os_unsafe:do_malloc/1
+bif os_unsafe:do_free/1
+bif os_unsafe:do_port_in/1
+bif os_unsafe:do_port_in32/1
+bif os_unsafe:do_port_out/2
+bif os_unsafe:do_port_out32/2
+bif os_unsafe:do_lock/1
+bif os_unsafe:do_unlock/1
+bif os_unsafe:do_read/2
+bif os_unsafe:do_write/2
+bif os_unsafe:do_write/3
+bif os_unsafe:register_for_interrupts/1
+bif os_unsafe:do_interrupt/0
+bif os_unsafe:do_instruction/1
+bif os_unsafe:do_format/1
+bif os_unsafe:do_print_string/1
+bif os_unsafe:get_os_package/0
+bif os_unsafe:load_pagetable/1
+bif os_process:get_node_id/1
+bif os_process:pid_to_binary/1
+bif os_process:binary_to_pid/1
+bif os_lli:run/1

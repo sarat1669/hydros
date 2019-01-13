@@ -1,0 +1,62 @@
+#!/usr/bin/env escript
+%%! -noshell
+
+%% Invoke as: generate bootloader_location (node_id, kernel_location)*
+
+main([]) -> ok;
+main(Kernels) ->
+	{ok, _, Bin} = compile:forms(gen_forms(Kernels)),
+	file:write_file("ebin/os_unikernels.beam", Bin),
+	{ok, byte_size(Bin)}.
+
+gen_forms([Boot|Ks]) ->
+	[
+		% Define the module
+		{attribute, 1, module, os_unikernels},
+		{attribute, 2, export, [{bootloader,0}, {kernels, 0}]},
+		% Generate the bootloader
+		{function, 3, bootloader, 0,
+			[
+				{clause, 4, [], [],
+					[
+						gen_bin(Boot)
+					]
+				}
+			]
+		},
+		% Generate the kernel
+		{function, 3, kernels, 0,
+			[
+				{clause, 4, [], [],
+					[
+						case Ks of
+							[] -> {nil, 5};
+							_ -> gen_kernel(Ks)
+						end
+					]
+				}
+			]
+		}
+	].
+
+gen_kernel([N, K]) ->
+	{cons, 5, {tuple, 5, [{integer, 5, list_to_integer(N)}, gen_bin(K)]}, {nil, 5}};
+gen_kernel([N, K | Ls]) ->
+	{cons, 5,
+		{tuple, 5, [{integer, 5, list_to_integer(N)}, gen_bin(K)]},
+		gen_kernel(Ls)
+	}.
+
+gen_bin(F) ->
+	{ok, Data} = file:read_file(F),
+	{bin, 5,
+		[
+			{bin_element,
+				5,
+				{integer, 5, Byte},
+				default,
+				default}
+		||
+			Byte <- binary:bin_to_list(Data)
+		]
+	}.

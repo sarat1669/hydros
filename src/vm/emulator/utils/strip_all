@@ -1,0 +1,4 @@
+#!/usr/bin/env escript
+
+main(Bs) ->
+	lists:map(fun(B) -> beam_lib:strip(B) end, Bs).

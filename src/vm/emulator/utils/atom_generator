@@ -1,0 +1,36 @@
+#!/usr/bin/env escript
+
+% A script that takes a list of BEAM file names and generators a list
+% of dependent atoms in 'atom.names' format.
+
+main(Fs) ->
+	output(
+		unique(
+			lists:filter(
+				fun(A) -> filter(A) end,
+				lists:append(
+					lists:map(fun(F) -> get_atoms(F) end, Fs)
+				)
+			)
+		)
+	).
+
+get_atoms(File) ->
+	{ok, {_, [{atoms, As}]}} = beam_lib:chunks(File, [atoms]),
+	lists:map(fun({_, A}) -> A end, As).
+
+filter(A) ->
+	% Ignore atoms that start with punctation
+	% as they will mess up the atom.names file
+	Str = lists:flatten(io_lib:format("~p", [A])),
+	(hd(Str) > 47) and lists:all(fun(C) -> C =/= 64 end, Str).
+
+unique(L) -> sets:to_list(sets:from_list(L)).
+
+output(As) ->
+	lists:foreach(
+		fun(A) ->
+			io:format("atom ~w\n", [A])
+		end,
+		As
+	).

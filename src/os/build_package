@@ -1,0 +1,25 @@
+#!/usr/bin/env escript
+
+main([]) ->
+	io:format("USAGE: output_file file[s]\n"
+				"Generates a file that contains an Erlang serialized list of binaries\n"
+				"that contain the contents of the requested files.\n"
+	);
+main([OutputFile|InputFiles]) ->
+	file:write_file(OutputFile,
+		term_to_binary(
+			lists:map(fun(X) -> read_file(X) end, InputFiles)
+		)
+	),
+	ok.
+
+read_file(FileName) ->
+	{ok, FileContents} = file:read_file(FileName),
+	{list_to_atom(extract_mod(FileName)), FileContents}.
+
+extract_mod(FileName) ->
+	filename:rootname(filename:basename(FileName)).
+
+get_to_char(Char, [Char|_]) -> "";
+get_to_char(Char, [Curr|Rest]) ->
+	[Curr|get_to_char(Char, Rest)].
